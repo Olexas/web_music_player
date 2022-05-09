@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% block content %}
+    <div class="music-container" id="music-container">
+      <div class="music-info">
+        <h4 id="title"></h4>
+        <div class="progress-container" id="progress-container">
+          <div class="progress" id="progress"></div>
+        </div>
+      </div>
+
+      <audio id="audio"></audio>
+
+      <div class="img-container">
+        <img onError="this.src='static/not_img.jpg'" id="cover" />
+      </div>
+      <div class="navigation">
+            <button id="prev" class="action-btn">
+          <i class="fas fa-backward"></i>
+        </button>
+        <button id="play" class="action-btn action-btn-big">
+          <i class="fas fa-play"></i>
+        </button>
+        <button id="next" class="action-btn">
+          <i class="fas fa-forward"></i>
+        </button>
+      </div>
+    </div>
+        <div>{{ message }}</div>
+        <form action="" method="post" enctype="multipart/form-data">
+            <label>Загрузите трек:</label>
+                <input type="file" accept=".mp3" class="form-control-file" id="track" name="file"> <br>
+            <button type="submit" class="btn btn-primary">Загрузить</button>
+        </form>
+<br>
+    <script type="text/javascript" src="/static/jquery-1.7.1.min.js"></script>
+
+{% for song in songs %}
+    <a style="display:inline-block;" href="javascript:void(0);">{{song[1] + 1}}) {{song[0]}}</a>
+                <a href="/delete_track/{{song[1]}}"><img src="/static/delete.png" height="16" width="16" /></a>
+                <a href="/static/{{ current }}/music/{{song[0]}}.mp3" download=""><img src="/static/download.png" height="16" width="16"/></a>
+                <br>
+        {% endfor %}
+    <script type='text/javascript'>
+        {% for song in songs %}
+            $('a').click(function(){
+                var str = $(this).text().slice(3);
+                loadSong(songs[$(this).text().slice(0, $(this).text().indexOf(")")) - 1][0], current);
+                playSong();
+                console.log(str);
+                console.log($(this).text().slice(0, $(this).text().indexOf(")")) - 1)
+                songIndex = $(this).text().slice(0, $(this).text().indexOf(")")) - 1;
+<!--                $('audio').attr('src', '/static/{{ current|safe }}/music/'+str+'.mp3');-->
+            });
+        {% endfor %}
+
+      const musicContainer = document.getElementById('music-container');
+      const playBtn = document.getElementById('play');
+      const prevBtn = document.getElementById('prev');
+      const nextBtn = document.getElementById('next');
+
+      const audio = document.getElementById('audio');
+      const progress = document.getElementById('progress');
+      const progressContainer = document.getElementById('progress-container');
+      const title = document.getElementById('title');
+      const cover = document.getElementById('cover');
+      const currTime = document.querySelector('#currTime');
+      const durTime = document.querySelector('#durTime');
+      let current = '{{ current|safe }}';
+
+      console.log(current);
+
+      const songs = {{ songs|safe }};
+      let songIndex = 0;
+
+      loadSong(songs[songIndex][0], current);
+
+      function loadSong(song, current) {
+        title.innerText = song;
+        audio.src = `/static/${current}/music/${song}.mp3`;
+        cover.src = `/static/${current}/img/${song}.jpg`;
+      }
+
+      function playSong() {
+        musicContainer.classList.add('play');
+        playBtn.querySelector('i.fas').classList.remove('fa-play');
+        playBtn.querySelector('i.fas').classList.add('fa-pause');
+
+        audio.play();
+      }
+
+      function pauseSong() {
+        musicContainer.classList.remove('play');
+        playBtn.querySelector('i.fas').classList.add('fa-play');
+        playBtn.querySelector('i.fas').classList.remove('fa-pause');
+
+        audio.pause();
+      }
+
+      function prevSong() {
+        songIndex--;
+
+        if (songIndex < 0) {
+          songIndex = songs.length - 1;
+        }
+
+        loadSong(songs[songIndex][0], current);
+
+        playSong();
+      }
+
+      function nextSong() {
+        songIndex++;
+
+        if (songIndex > songs.length - 1) {
+          songIndex = 0;
+        }
+
+        loadSong(songs[songIndex][0], current);
+
+        playSong();
+      }
+
+      function updateProgress(e) {
+        const { duration, currentTime } = e.srcElement;
+        const progressPercent = (currentTime / duration) * 100;
+        progress.style.width = `${progressPercent}%`;
+      }
+
+      function setProgress(e) {
+        const width = this.clientWidth;
+        const clickX = e.offsetX;
+        const duration = audio.duration;
+
+        audio.currentTime = (clickX / width) * duration;
+      }
+
+      function DurTime (e) {
+          const {duration,currentTime} = e.srcElement;
+          var sec;
+          var sec_d;
+
+          let min = (currentTime==null)? 0:
+           Math.floor(currentTime/60);
+           min = min <10 ? '0'+min:min;
+
+          function get_sec (x) {
+              if(Math.floor(x) >= 60){
+
+                  for (var i = 1; i<=60; i++){
+                      if(Math.floor(x)>=(60*i) && Math.floor(x)<(60*(i+1))) {
+                          sec = Math.floor(x) - (60*i);
+                          sec = sec <10 ? '0'+sec:sec;
+                      }
+                  }
+              }else{
+                  sec = Math.floor(x);
+                  sec = sec <10 ? '0'+sec:sec;
+               }
+          }
+
+          get_sec (currentTime,sec);
+
+          currTime.innerHTML = min +':'+ sec;
+
+          let min_d = (isNaN(duration) === true)? '0':
+              Math.floor(duration/60);
+           min_d = min_d <10 ? '0'+min_d:min_d;
+
+
+           function get_sec_d (x) {
+              if(Math.floor(x) >= 60){
+
+                  for (var i = 1; i<=60; i++){
+                      if(Math.floor(x)>=(60*i) && Math.floor(x)<(60*(i+1))) {
+                          sec_d = Math.floor(x) - (60*i);
+                          sec_d = sec_d <10 ? '0'+sec_d:sec_d;
+                      }
+                  }
+              }else{
+                  sec_d = (isNaN(duration) === true)? '0':
+                  Math.floor(x);
+                  sec_d = sec_d <10 ? '0'+sec_d:sec_d;
+               }
+          }
+
+
+          get_sec_d (duration);
+
+          durTime.innerHTML = min_d +':'+ sec_d;
+
+      };
+
+      playBtn.addEventListener('click', () => {
+        const isPlaying = musicContainer.classList.contains('play');
+
+        if (isPlaying) {
+          pauseSong();
+        } else {
+          playSong();
+        }
+      });
+
+      prevBtn.addEventListener('click', prevSong);
+      nextBtn.addEventListener('click', nextSong);
+
+      audio.addEventListener('timeupdate', updateProgress);
+
+      progressContainer.addEventListener('click', setProgress);
+
+      audio.addEventListener('ended', nextSong);
+
+      audio.addEventListener('timeupdate',DurTime);
+
+  </script>
+
+{% endblock %}

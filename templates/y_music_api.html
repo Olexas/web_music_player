@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% for i in range(2) %}
+    <br>
+{% endfor %}
+    <h1>Яндекс Музыка API</h1>
+    <h2>{{ acinfo }}</h2>
+{% for i in range(2) %}
+    <br>
+{% endfor %}
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <h5>{{ first_text }}</h5>
+        <p>{{ form.submit_last_track(type="submit", class="btn btn-primary") }} &nbsp;&nbsp;
+        <div>{{ message }}</div>
+        <br>
+    </form>
+    <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <h5>{{ second_text }}</h5>
+            {{ form.function2_id.label }}<br>
+            {{ form.function2_id(class="form-control-sm", type="text") }}<br><br>
+            <p>{{ form.function2_submit(type="submit", class="btn btn-primary") }} &nbsp;&nbsp;
+            <div>{{ message1 }}</div>
+        <br>
+        </form>
+    <form action="" method="post">
+            {{ form.hidden_tag() }}
+            <h5>{{ third_text }}</h5>
+            <p>{{ form.function3_submit(type="submit", class="btn btn-primary") }} &nbsp;&nbsp;
+            <div>{{ message2 }}</div>
+        </form>
+<br>
+{% for track in track_list %}
+    <a href="/yandex_music/add_track/{{ track[3] }}">{{ track[0] }}) {{ track[1] }} - {{  track[2]  }}</a><br>
+{% endfor %}
+{% endblock %}

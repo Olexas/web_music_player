@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% for i in range(9) %}
+    <br>
+{% endfor %}
+    <h1>Авторизация Яндекс Музыки</h1>
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.token.label }}<br>
+            {{ form.token(class="form-control", type="text") }}<br>
+            {% for error in form.token.errors %}
+                <div class="alert alert-danger" role="alert">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        <a class="btn btn-link " href="https://oauth.yandex.ru/authorize?response_type=token&client_id=23cabbbdc6cd418abb4b39c32c41195d"
+           target="_blank">Ссылка для получения токена</a><br>
+        <a class="btn btn-link" href="/instruction">Инструкция для получения вашего токена</a>
+        </p>
+        <p>{{ form.submit(type="submit", class="btn btn-primary") }} &nbsp;&nbsp;
+        <div>{{ message }}</div>
+    </form>
+{% endblock %}

@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% for i in range(2) %}
+    <br>
+{% endfor %}
+    <h1>Яндекс Музыка API</h1>
+    <h2>{{ acinfo }}</h2>
+{% for i in range(2) %}
+    <br>
+{% endfor %}
+    <form action="" method="post">
+        <h5>Получение треков из плейлиста "Мне нравится"</h5>
+        <a class="btn btn-primary " href="/yandex_music/users_like_tracks">Перейти</a>
+        <div>{{ message }}</div>
+        <br>
+    </form>
+    <form action="" method="post">
+            <h5>Получение треков из созданных пользователем плейлистов</h5>
+            {% for i in playlists %}
+                <a class="btn btn-link " href="/yandex_music/users_playlists/{{ i }}">{{ i }}</a>
+            {% endfor %}
+            <br><br>
+        </form>
+    <form action="" method="post">
+        <h5>Получение треков из альбома</h5>
+        {{ form.hidden_tag() }}
+        {{ form.album_id_form.label }}<br>
+        {{ form.album_id_form(class="form-control-sm", type="text") }}<br>
+        <br>
+        <p>{{ form.album_id_submit(type="submit", class="btn btn-primary") }}
+        <br>
+    </form>
+    <form action="" method="post">
+        <h5>Получение треков определенного исполнителя</h5>
+        {{ form.hidden_tag() }}
+        {{ form.artist_id_form.label }}<br>
+        {{ form.artist_id_form(class="form-control-sm", type="text") }}<br>
+        <br>
+        <p>{{ form.artist_id_submit(type="submit", class="btn btn-primary") }}
+    </form>
+    <form action="" method="post">
+        <h5>Получение трека по ID</h5>
+        {{ form.hidden_tag() }}
+        {{ form.track_id_form.label }}<br>
+        {{ form.track_id_form(class="form-control-sm", type="text") }}<br>
+        <br>
+        <p>{{ form.track_id_submit(type="submit", class="btn btn-primary") }}
+        <div>{{ message }}</div>
+    </form>
+{% endblock %}
